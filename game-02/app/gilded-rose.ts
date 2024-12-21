@@ -17,53 +17,62 @@ export class GildedRose {
         this.items = items;
     }
 
-    updateQuality() {
-        for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-                if (this.items[i].quality > 0) {
-                    if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                        this.items[i].quality = this.items[i].quality - 1
-                    }
-                }
-            } else {
-                if (this.items[i].quality < 50) {
-                    this.items[i].quality = this.items[i].quality + 1
-                    if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-                        if (this.items[i].sellIn < 11) {
-                            if (this.items[i].quality < 50) {
-                                this.items[i].quality = this.items[i].quality + 1
-                            }
-                        }
-                        if (this.items[i].sellIn < 6) {
-                            if (this.items[i].quality < 50) {
-                                this.items[i].quality = this.items[i].quality + 1
-                            }
-                        }
-                    }
-                }
-            }
-            if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                this.items[i].sellIn = this.items[i].sellIn - 1;
-            }
-            if (this.items[i].sellIn < 0) {
-                if (this.items[i].name != 'Aged Brie') {
-                    if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-                        if (this.items[i].quality > 0) {
-                            if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                                this.items[i].quality = this.items[i].quality - 1
-                            }
-                        }
-                    } else {
-                        this.items[i].quality = this.items[i].quality - this.items[i].quality
-                    }
-                } else {
-                    if (this.items[i].quality < 50) {
-                        this.items[i].quality = this.items[i].quality + 1
-                    }
-                }
+    private decreaseQuality(item: Item, degradationRate: number = 1) {
+        if (item.quality > 0) {
+            item.quality = Math.max(0, item.quality - degradationRate);
+        }
+    }
+
+    private increaseQuality(item: Item) {
+        if (item.quality < 50) {
+            item.quality += 1;
+        }
+    }
+
+    private updateSellIn(item: Item) {
+        if (item.name != 'Sulfuras, Hand of Ragnaros') {
+            item.sellIn -= 1;
+        }
+    }
+
+    private updateQualityPostSellIn(item: Item) {
+        if (item.sellIn < 0) {
+            if (item.name === 'Backstage passes to a TAFKAL80ETC concert') {
+                item.quality = 0;
+            } else if (item.name != 'Aged Brie' && item.name != 'Sulfuras, Hand of Ragnaros') {
+                this.decreaseQuality(item);
+            } else if(item.name === 'Aged Brie'){
+                this.increaseQuality(item);
             }
         }
+    }
 
+    updateQuality() {
+        for (const item of this.items) {
+            const update: { [key: string]: (item: Item) => void } = {
+                'Aged Brie': (item) => {
+                    this.increaseQuality(item);
+                },
+                'Backstage passes to a TAFKAL80ETC concert': (item) => {
+                    this.increaseQuality(item);
+                    if (item.sellIn < 11) this.increaseQuality(item);
+                    if (item.sellIn < 6) this.increaseQuality(item);
+                },
+                'Sulfuras, Hand of Ragnaros': () => {},
+                'Conjured': (item) => {
+                  this.decreaseQuality(item, 2);
+                },
+                'default': (item) => {
+                    this.decreaseQuality(item);
+                },
+            };
+    
+            const updateItems = update[item.name] || update['default'];
+            updateItems(item);
+    
+            this.updateSellIn(item);
+            this.updateQualityPostSellIn(item);
+        }
         return this.items;
     }
 }

@@ -40,3 +40,28 @@ for you).
 
 Just for clarification, an item can never have its Quality increase above 50, however "Sulfuras" is a
 legendary item and as such its Quality is 80 and it never alters.
+
+## Compilar y ejecutar el código
+
+Prueba el funcionamiento de la refactorización del código, ejecutando los siguientes comandos en la terminal:
+
+1.  **Instala las dependencias:** 
+
+    ```bash
+    npm install # o yarn install
+    ```
+
+2.  **Compila el código TypeScript:** 
+
+    ```bash
+    tsc
+    ```
+
+3.  **Ejecuta el programa:**
+
+    ```bash
+    node inventory.js
+    ```
+
+    Se imprimirá en la terminal el resultado de la ejecución del código, mostrando el inventario actualizado
+

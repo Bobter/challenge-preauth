@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2016", // o "es2020", "esnext", etc. según tu entorno
+    "module": "commonjs", // o "esnext" si usas módulos ES en Node.js
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["jest"], // ¡Añade esto!
+    "moduleResolution": "node", // Asegúrate de tener esto
+    "baseUrl": "./", // Opcional: para rutas relativas más limpias
+    "outDir": "./dist" // Opcional: carpeta de salida para el JS compilado
+  },
+  "include": [
+    "./**/*.ts", // Incluye todos los archivos .ts en el proyecto
+    "./**/*.tsx" // Si usas React, incluye también los archivos .tsx
+  ],
+  "exclude": [
+    "node_modules" // Excluye la carpeta node_modules
+  ]
+}
